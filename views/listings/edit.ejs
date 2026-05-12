@@ -1,0 +1,44 @@
+<% layout("/layouts/boilerplate") %>
+<div class="form-page-wrap" style="max-width:640px;">
+  <h3>Edit Your Listing</h3>
+  <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label class="form-label" style="font-size:0.85rem;font-weight:600;">Title</label>
+      <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" required>
+      <div class="valid-feedback">Title looks good!</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" style="font-size:0.85rem;font-weight:600;">Description</label>
+      <textarea name="listing[description]" class="form-control" rows="4" required><%= listing.description %></textarea>
+      <div class="invalid-feedback">Please enter a short description</div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label" style="font-size:0.85rem;font-weight:600;">Current Image</label>
+      <div style="border-radius:var(--radius-card);overflow:hidden;height:160px;margin-bottom:0.75rem;">
+        <img src="<%= originalImageUrl %>" style="width:100%;height:100%;object-fit:cover;">
+      </div>
+      <label class="form-label" style="font-size:0.85rem;font-weight:600;">Upload New Image (optional)</label>
+      <input name="listing[image]" type="file" class="form-control">
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col-md-5">
+        <label class="form-label" style="font-size:0.85rem;font-weight:600;">Price per night (₹)</label>
+        <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" required>
+        <div class="invalid-feedback">Price should be valid</div>
+      </div>
+      <div class="col-md-7">
+        <label class="form-label" style="font-size:0.85rem;font-weight:600;">Country</label>
+        <input name="listing[country]" value="<%= listing.country %>" type="text" class="form-control" required>
+        <div class="invalid-feedback">Country name should be valid</div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <label class="form-label" style="font-size:0.85rem;font-weight:600;">Location</label>
+      <input name="listing[location]" value="<%= listing.location %>" type="text" class="form-control" required>
+      <div class="invalid-feedback">Location should be valid</div>
+    </div>
+    <button class="btn-brand-submit" type="submit">
+      <i class="fa-solid fa-floppy-disk" style="margin-right:0.4rem;"></i> Save Changes
+    </button>
+  </form>
+</div>

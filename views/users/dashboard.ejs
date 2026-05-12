@@ -1,0 +1,37 @@
+<h1>My Reservations</h1>
+
+<% if(bookings.length === 0) { %>
+
+    <h3>No reservations yet</h3>
+
+<% } %>
+
+<% bookings.forEach((booking) => { %>
+
+    <div style="
+        border:1px solid #ccc;
+        padding:20px;
+        margin:20px;
+        border-radius:10px;
+    ">
+
+        <img 
+            src="<%= booking.listing.image.url %>" 
+            width="300"
+        >
+
+        <h2><%= booking.listing.title %></h2>
+
+        <p><%= booking.listing.location %></p>
+
+        <p>₹ <%= booking.totalPrice %></p>
+
+        <p>
+            <%= booking.checkIn.toDateString() %>
+            -
+            <%= booking.checkOut.toDateString() %>
+        </p>
+
+    </div>
+
+<% }) %>

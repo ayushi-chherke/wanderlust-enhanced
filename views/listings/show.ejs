@@ -1,0 +1,348 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="show-wrapper">
+  <!-- Header -->
+  <div class="show-header">
+    <h1 class="show-title"><%= listing.title %></h1>
+    <div class="show-meta">
+      <span><i class="fa-solid fa-star" style="color:var(--brand);font-size:0.8rem;"></i> <strong>4.8</strong> &nbsp;(124 reviews)</span>
+      <span style="color:var(--border);">|</span>
+      <span><i class="fa-solid fa-location-dot" style="color:var(--brand);font-size:0.8rem;"></i> <%= listing.location %>, <%= listing.country %></span>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div class="show-gallery">
+    <img src="<%= listing.image.url %>" alt="<%= listing.title %>">
+  </div>
+
+  <!-- Main Grid -->
+  <div class="show-grid">
+    <!-- Left: Details -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+        <div>
+          <h3 style="font-size:1.4rem;margin-bottom:0.25rem;">Hosted by <em><%= listing.owner.username %></em></h3>
+          <p style="color:var(--muted);font-size:0.88rem;"><i class="fa-solid fa-user-check" style="color:var(--brand);"></i> &nbsp;Verified Host</p>
+        </div>
+        <div style="display:flex;gap:0.6rem;">
+          <span style="background:var(--bg-warm);border:1px solid var(--border);border-radius:2rem;padding:0.35rem 0.9rem;font-size:0.82rem;color:var(--muted);">
+            <i class="fa-solid fa-wifi"></i> WiFi
+          </span>
+          <span style="background:var(--bg-warm);border:1px solid var(--border);border-radius:2rem;padding:0.35rem 0.9rem;font-size:0.82rem;color:var(--muted);">
+            <i class="fa-solid fa-snowflake"></i> AC
+          </span>
+          <span style="background:var(--bg-warm);border:1px solid var(--border);border-radius:2rem;padding:0.35rem 0.9rem;font-size:0.82rem;color:var(--muted);">
+            <i class="fa-solid fa-car"></i> Parking
+          </span>
+        </div>
+      </div>
+
+      <hr style="border-color:var(--border);">
+
+      <p class="show-description" style="margin-top:1.5rem;"><%= listing.description %></p>
+
+      <div class="show-location-badge">
+        <i class="fa-solid fa-map-pin"></i>
+        <span><%= listing.location %>, <%= listing.country %></span>
+      </div>
+
+      <!-- Owner Actions -->
+      <% if(currUser && listing.owner._id.equals(currUser._id)) { %>
+      <div class="owner-actions" style="margin-top:2rem;">
+        <a href="/listings/<%= listing._id %>/edit" class="btn-edit"><i class="fa-solid fa-pen-to-square"></i>&nbsp; Edit Listing</a>
+        <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" style="margin:0;">
+          <button class="btn-del" onclick="return confirm('Delete this listing?')"><i class="fa-solid fa-trash"></i>&nbsp; Delete</button>
+        </form>
+      </div>
+      <% } %>
+
+      <!-- Reviews Section -->
+      <div class="review-section">
+        <hr style="border-color:var(--border);">
+        <% if(currUser) { %>
+        <div class="review-form-card">
+          <h4 style="font-size:1.3rem;margin-bottom:1rem;">Leave a Review</h4>
+          <form action="/listings/<%= listing.id %>/reviews" method="POST" novalidate class="needs-validation">
+            <div class="mb-3">
+              <label class="form-label" style="font-size:0.85rem;font-weight:600;">Your Rating</label>
+              <fieldset class="starability-heart">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1" /><label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2" /><label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" /><label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" /><label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5" /><label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
+            </div>
+            <div class="mb-3">
+              <label for="comment" class="form-label" style="font-size:0.85rem;font-weight:600;">Comments</label>
+              <textarea name="review[comment]" id="comment" cols="30" rows="4" class="form-control" required placeholder="Share your experience..."></textarea>
+              <div class="invalid-feedback">Please add some comments for your review.</div>
+            </div>
+            <button class="btn-review-submit">Submit Review</button>
+          </form>
+        </div>
+        <% } %>
+
+        <h4 style="font-size:1.3rem;margin-bottom:1.25rem;"><i class="fa-solid fa-star" style="color:var(--brand);font-size:1rem;"></i> 4.8 &nbsp;&#183;&nbsp; <%= listing.reviews.length %> Reviews</h4>
+
+        <div class="row g-3">
+          <% for(review of listing.reviews) { %>
+          <div class="col-12">
+            <div class="review-card" style="border-radius:var(--radius-card)!important;">
+              <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;">
+                <div style="width:2.2rem;height:2.2rem;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem;flex-shrink:0;">
+                  <%= review.author.username.charAt(0).toUpperCase() %>
+                </div>
+                <div>
+                  <div class="review-author">@<%= review.author.username %></div>
+                  <p class="starability-result" data-rating="<%= review.rating %>" style="margin:0;"></p>
+                </div>
+              </div>
+              <p class="review-comment"><%= review.comment %></p>
+              <% if(currUser && review.author.equals(currUser._id)) { %>
+              <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" style="margin-top:0.75rem;">
+                <button class="btn-delete-review" style="margin:0;"><i class="fa-solid fa-trash"></i> Delete</button>
+              </form>
+              <% } %>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Booking Card -->
+    <div>
+      <div class="booking-card">
+        <div class="price-line">
+          &#8377;<%= listing.price.toLocaleString("en-IN") %> <span>/ night</span>
+        </div>
+
+        <!-- Date Picker -->
+        <div class="date-grid">
+          <div class="date-cell">
+            <label for="checkin">Check-in</label>
+            <input type="date" id="checkin" onchange="calcTotal()">
+          </div>
+          <div class="date-cell">
+            <label for="checkout">Check-out</label>
+            <input type="date" id="checkout" onchange="calcTotal()">
+          </div>
+        </div>
+
+        <!-- Guests -->
+        <select class="guests-select" id="guestsSelect">
+          <option value="1">1 Guest</option>
+          <option value="2">2 Guests</option>
+          <option value="3">3 Guests</option>
+          <option value="4">4 Guests</option>
+          <option value="5">5+ Guests</option>
+        </select>
+
+        <!-- Book Button -->
+        <button class="book-btn" onclick="openPaymentModal()">
+          <i class="fa-solid fa-lock" style="margin-right:0.4rem;font-size:0.85rem;"></i>
+          Reserve &amp; Pay
+        </button>
+        <div class="book-note"><i class="fa-solid fa-circle-check" style="color:#2ecc71;"></i> &nbsp;You won't be charged yet</div>
+
+        <!-- Price Breakdown -->
+        <div class="pay-breakdown" id="priceBreakdown" style="display:none;">
+          <div class="pay-row"><span id="nightsLabel">nights × &#8377;<%= listing.price.toLocaleString("en-IN") %></span><span id="baseAmt">—</span></div>
+          <div class="pay-row"><span>Cleaning fee</span><span>&#8377;500</span></div>
+          <div class="pay-row"><span>Service fee</span><span id="serviceFee">—</span></div>
+          <div class="pay-row"><span>GST (18%)</span><span id="gstAmt">—</span></div>
+          <div class="pay-row total"><span>Total</span><span id="totalAmt">—</span></div>
+        </div>
+      </div>
+
+      <!-- Trust badges -->
+      <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:0.6rem;">
+        <div style="display:flex;align-items:center;gap:0.65rem;font-size:0.85rem;color:var(--muted);">
+          <i class="fa-solid fa-shield-halved" style="color:var(--brand);"></i> Secure &amp; encrypted payments
+        </div>
+        <div style="display:flex;align-items:center;gap:0.65rem;font-size:0.85rem;color:var(--muted);">
+          <i class="fa-solid fa-rotate-left" style="color:var(--brand);"></i> Free cancellation within 48 hrs
+        </div>
+        <div style="display:flex;align-items:center;gap:0.65rem;font-size:0.85rem;color:var(--muted);">
+          <i class="fa-solid fa-headset" style="color:var(--brand);"></i> 24/7 customer support
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PAYMENT MODAL ── -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Default: form -->
+      <div id="payFormView">
+        <div class="modal-header">
+          <h5 class="modal-title" id="paymentModalLabel">Complete Your Booking</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="payment-secure">
+            <i class="fa-solid fa-lock"></i>
+            Your payment is secured with 256-bit SSL encryption
+          </div>
+
+          <!-- Booking Summary -->
+          <div style="background:var(--bg-warm);border-radius:0.75rem;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:0.88rem;">
+            <div style="font-weight:600;margin-bottom:0.5rem;"><%= listing.title %></div>
+            <div style="color:var(--muted);" id="modalSummaryText">Select dates to see price</div>
+          </div>
+
+          <!-- Card Icons -->
+          <div class="card-icons">
+            <span class="card-icon-badge" style="color:#1a1aff;">VISA</span>
+            <span class="card-icon-badge" style="color:#eb001b;">MC</span>
+            <span class="card-icon-badge" style="color:#ff5f00;">AMEX</span>
+            <span class="card-icon-badge">UPI</span>
+            <span class="card-icon-badge">NetBanking</span>
+          </div>
+
+          <!-- Card form -->
+          <div class="mb-3">
+            <label class="form-label-sm">Cardholder Name</label>
+            <input type="text" class="pay-input" placeholder="Rahul Sharma" id="cardName">
+          </div>
+          <div class="mb-3">
+            <label class="form-label-sm">Card Number</label>
+            <input type="text" class="pay-input" placeholder="1234 5678 9012 3456" maxlength="19" id="cardNum" oninput="formatCard(this)">
+          </div>
+          <div class="pay-row-inputs mb-3">
+            <div>
+              <label class="form-label-sm">Expiry</label>
+              <input type="text" class="pay-input" placeholder="MM / YY" maxlength="7" id="cardExp" oninput="formatExpiry(this)">
+            </div>
+            <div>
+              <label class="form-label-sm">CVV</label>
+              <input type="password" class="pay-input" placeholder="•••" maxlength="4" id="cardCvv">
+            </div>
+          </div>
+
+          <!-- UPI Option -->
+          <div style="border:1.5px solid var(--border);border-radius:0.75rem;padding:0.9rem 1.1rem;display:flex;align-items:center;gap:0.75rem;cursor:pointer;margin-bottom:0.5rem;" onclick="toggleUpi(this)">
+            <i class="fa-solid fa-mobile-screen" style="color:var(--brand);"></i>
+            <span style="font-size:0.88rem;font-weight:500;">Pay via UPI</span>
+            <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:var(--muted);font-size:0.75rem;"></i>
+          </div>
+          <div id="upiInput" style="display:none;margin-bottom:0.5rem;">
+            <input type="text" class="pay-input" placeholder="yourname@upi" style="margin-top:0.5rem;">
+          </div>
+        </div>
+        <div class="modal-footer" style="justify-content:space-between;align-items:center;">
+          <div style="font-size:0.82rem;color:var(--muted);">Total: <strong id="modalTotal" style="color:var(--ink);">—</strong></div>
+          <button class="btn-pay-now" onclick="processPayment()">
+            <i class="fa-solid fa-lock" style="margin-right:0.4rem;font-size:0.85rem;"></i>
+            Pay Now
+          </button>
+        </div>
+      </div>
+
+      <!-- Success State -->
+      <div id="paySuccessView" style="display:none;">
+        <div class="modal-body">
+          <div class="payment-success-wrap">
+            <div class="checkmark-circle"><i class="fa-solid fa-check"></i></div>
+            <h4 style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;margin-bottom:0.5rem;">Booking Confirmed!</h4>
+            <p style="color:var(--muted);font-size:0.9rem;">Your reservation at <strong><%= listing.title %></strong> is confirmed. A confirmation email has been sent.</p>
+            <div style="background:var(--bg-warm);border-radius:0.75rem;padding:1rem;margin:1.5rem 0;font-size:0.88rem;text-align:left;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem;"><span style="color:var(--muted);">Booking ID</span><span style="font-weight:600;">#WL<span id="bookingId"></span></span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Location</span><span><%= listing.location %>, <%= listing.country %></span></div>
+            </div>
+            <button class="btn-pay-now" data-bs-dismiss="modal" style="width:100%;">Back to Listing</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const pricePerNight = <%= listing.price %>;
+
+  // Set default dates
+  const today = new Date();
+  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter = new Date(today); dayAfter.setDate(dayAfter.getDate() + 4);
+  document.getElementById('checkin').value = tomorrow.toISOString().split('T')[0];
+  document.getElementById('checkout').value = dayAfter.toISOString().split('T')[0];
+  calcTotal();
+
+  function calcTotal() {
+    const ci = document.getElementById('checkin').value;
+    const co = document.getElementById('checkout').value;
+    if (!ci || !co) return;
+    const diff = Math.round((new Date(co) - new Date(ci)) / 86400000);
+    if (diff <= 0) return;
+    const base = diff * pricePerNight;
+    const cleaning = 500;
+    const service = Math.round(base * 0.08);
+    const gst = Math.round((base + cleaning + service) * 0.18);
+    const total = base + cleaning + service + gst;
+
+    document.getElementById('nightsLabel').textContent = diff + ' nights × ₹' + pricePerNight.toLocaleString('en-IN');
+    document.getElementById('baseAmt').textContent = '₹' + base.toLocaleString('en-IN');
+    document.getElementById('serviceFee').textContent = '₹' + service.toLocaleString('en-IN');
+    document.getElementById('gstAmt').textContent = '₹' + gst.toLocaleString('en-IN');
+    document.getElementById('totalAmt').textContent = '₹' + total.toLocaleString('en-IN');
+    document.getElementById('priceBreakdown').style.display = 'block';
+
+    // Update modal
+    const opts = {day:'numeric',month:'short'};
+    document.getElementById('modalSummaryText').textContent =
+      new Date(ci).toLocaleDateString('en-IN',opts) + ' – ' + new Date(co).toLocaleDateString('en-IN',opts) + ' · ' + diff + ' nights';
+    document.getElementById('modalTotal').textContent = '₹' + total.toLocaleString('en-IN');
+  }
+
+  function openPaymentModal() {
+    document.getElementById('payFormView').style.display = 'block';
+    document.getElementById('paySuccessView').style.display = 'none';
+    const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    modal.show();
+  }
+
+  function processPayment() {
+    const name = document.getElementById('cardName').value.trim();
+    const num = document.getElementById('cardNum').value.replace(/\s/g,'');
+    const exp = document.getElementById('cardExp').value.trim();
+    const cvv = document.getElementById('cardCvv').value.trim();
+
+    if (!name || num.length < 16 || exp.length < 5 || cvv.length < 3) {
+      alert('Please fill in all card details correctly.');
+      return;
+    }
+
+    // Simulate processing
+    const btn = document.querySelector('.btn-pay-now');
+    btn.textContent = 'Processing...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+      document.getElementById('payFormView').style.display = 'none';
+      document.getElementById('paySuccessView').style.display = 'block';
+      document.getElementById('bookingId').textContent = Math.floor(100000 + Math.random() * 900000);
+    }, 1800);
+  }
+
+  function formatCard(input) {
+    let v = input.value.replace(/\D/g,'').substring(0,16);
+    input.value = v.match(/.{1,4}/g)?.join(' ') || v;
+  }
+
+  function formatExpiry(input) {
+    let v = input.value.replace(/\D/g,'').substring(0,4);
+    if (v.length > 2) v = v.slice(0,2) + ' / ' + v.slice(2);
+    input.value = v;
+  }
+
+  function toggleUpi(el) {
+    const box = document.getElementById('upiInput');
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  }
+</script>

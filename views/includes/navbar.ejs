@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-md bg-white border-bottom sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings">
+      <i class="fa-regular fa-compass brand-icon"></i>
+      Wander<span style="color:var(--brand)">lust</span>
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <!-- Search -->
+      <div class="search-wrap mx-auto d-none d-md-flex">
+        <i class="fa-solid fa-magnifying-glass" style="color:var(--muted);font-size:0.85rem;"></i>
+        <input type="text" placeholder="Search destinations..." id="navSearchInput" onkeydown="if(event.key==='Enter'){window.location='/listings?search='+this.value}">
+        <button class="search-btn" onclick="window.location='/listings?search='+document.getElementById('navSearchInput').value">Search</button>
+      </div>
+      <!-- Links -->
+      <div class="navbar-nav ms-auto align-items-center">
+        <a class="nav-link" href="/listings">Explore</a>
+        <a class="nav-link" href="/listings/new">Rent Your Home</a>
+        <% if(!currUser) { %>
+        <a class="nav-link" href="/signup"><b>Sign Up</b></a>
+        <a class="nav-link nav-cta" href="/login">Login</a>
+        <% } else { %>
+        <span class="nav-link" style="color:var(--muted)!important;font-size:0.82rem;">Hi, <%= currUser.username %></span>
+        <a class="nav-link nav-cta" href="/logout">Logout</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
